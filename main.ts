@@ -1,5 +1,14 @@
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile8`, function (sprite, location) {
-    game.over(true, effects.hearts)
+    tiles.setTileAt(location, assets.tile`transparency16`)
+    AAA += 1
+    if (AAA == 3) {
+        game.over(true, effects.hearts)
+    } else if (AAA == 2) {
+        music.baDing.play()
+        game.splash("ステージクリア笑")
+        mySprite.setPosition(24, 80)
+        tiles.setCurrentTilemap(tilemap`レベル3`)
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile5`, function (sprite, location) {
     if (0 < mySprite.ay) {
@@ -48,11 +57,25 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`tile5`, function (sprite, loc
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite, location) {
     game.over(false, effects.splatter)
 })
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
-        mySprite.vy = -100
+scene.onOverlapTile(SpriteKind.Player, assets.tile`tile9`, function (sprite, location) {
+    mySprite.vy = -100
+    for (let 値 of tiles.getTilesByType(assets.tile`tile2`)) {
+        tiles.setTileAt(値, assets.tile`tile3`)
+        tiles.setWallAt(値, true)
     }
 })
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (mySprite.ay < 0) {
+        if (mySprite.isHittingTile(CollisionDirection.Top)) {
+            mySprite.vy = 100
+        }
+    } else {
+        if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
+            mySprite.vy = -100
+        }
+    }
+})
+let AAA = 0
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -207,3 +230,4 @@ mySprite.setPosition(24, 80)
 mySprite.ay = 300
 controller.moveSprite(mySprite, 100, 0)
 scene.cameraFollowSprite(mySprite)
+AAA = 1
